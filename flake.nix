@@ -30,6 +30,7 @@
             languageserver
             httpgd
             lintr
+            lme4
           ]);
         shellHook = ''
           mkdir -p .vscode

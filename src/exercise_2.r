@@ -24,3 +24,15 @@ print(anova(both_anova))
 
 qqnorm(residuals(both_anova))
 plot(fitted(both_anova), residuals(both_anova))
+
+print("")
+print("### 2a ###")
+ancova_county_lm <- lm(Crops ~ Size + County, data = crops_frame)
+ancova_related_lm <- lm(Crops ~ Size + Related, data = crops_frame)
+
+print(drop1(ancova_county_lm, test = "F"))
+print(drop1(ancova_related_lm, test = "F"))
+print(" -> The significance for County and Related are to low")
+print("when accounting for Size.")
+qqnorm(residuals(ancova_county_lm))
+qqnorm(residuals(ancova_related_lm))
