@@ -156,7 +156,6 @@ for(n in 1:num_test_pts){
   p[n] = k_test$p.value
   
 }
-plot(theta, p)
 print(theta[p>0.95])
 })
 ```
