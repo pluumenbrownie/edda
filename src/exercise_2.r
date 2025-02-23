@@ -10,14 +10,6 @@ related_anova <- lm(Crops ~ Related, data = crops_frame)
 both_anova <- lm(Crops ~ Related * County, data = crops_frame)
 
 boxplot(crops$Crops)
-
-writeLines("\n                          ### County ###")
-print(anova(county_anova))
-# print(summary(county_anova))
-writeLines("\n                          ### Related ###")
-print(anova(related_anova))
-# print(summary(related_anova))
-
 writeLines("\n                          ### Country and Related ###")
 print(anova(both_anova))
 

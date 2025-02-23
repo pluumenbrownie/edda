@@ -31,6 +31,7 @@
             httpgd
             lintr
             lme4
+            rmarkdown
           ]);
         shellHook = ''
           mkdir -p .vscode
