@@ -43,3 +43,34 @@ This summary shows that the average farm in county 1 of which the farmer is not 
 ```{r}
 6700.0 + 851.0
 ```
+This seems plausible.
+
+## Part B 
+```{r}
+size_anova <- lm(Crops ~ Size, data = crops_frame)
+ancova_county_lm <- lm(Crops ~ Size + County, data = crops_frame)
+ancova_related_lm <- lm(Crops ~ Size + Related, data = crops_frame)
+```
+
+Now we want to take the size of the farm into account. 
+
+```{r}
+drop1(ancova_county_lm, test = "F")
+summary(ancova_county_lm)
+```
+
+This ANCOVA shows that the size of the farm is strongly correlated with the yield of a farm, which can be seen in the low p-value of $4.5\cdot 10^{-10}$. The county does no appear to have a significant effect here, as the p-value is to high. The data for the size and related status looks similar:
+
+```{r}
+drop1(ancova_related_lm, test = "F")
+summary(ancova_related_lm)
+```
+While the correlation between crop yield and farm size is significant, the related status does not appear to have an effect.
+
+```{r, fig.height=3, fig.width=6}
+qqplot(residuals(ancova_county_lm))
+qqline(residuals(ancova_county_lm))
+qqplot(residuals(ancova_related_lm))
+qqline(residuals(ancova_related_lm))
+```
+As ANCOVA assumes that the underlying data is normally distributed, we will have to check for normality. 

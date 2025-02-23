@@ -32,6 +32,8 @@
             lintr
             lme4
             rmarkdown
+            ggplot2
+            dplyr
           ]);
         shellHook = ''
           mkdir -p .vscode
