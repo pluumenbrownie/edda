@@ -11,28 +11,34 @@ both_anova <- lm(Crops ~ Related * County, data = crops_frame)
 
 boxplot(crops$Crops)
 
-print(crops_frame)
-print("### County ###")
+writeLines("\n                          ### County ###")
 print(anova(county_anova))
 # print(summary(county_anova))
-print("### Related ###")
+writeLines("\n                          ### Related ###")
 print(anova(related_anova))
 # print(summary(related_anova))
 
-print("### Country and Related ###")
+writeLines("\n                          ### Country and Related ###")
 print(anova(both_anova))
 
 qqnorm(residuals(both_anova))
 plot(fitted(both_anova), residuals(both_anova))
 
-print("")
-print("### 2a ###")
+
+writeLines("\n\n                          ### 2b ###")
+size_anova <- lm(Crops ~ Size, data = crops_frame)
 ancova_county_lm <- lm(Crops ~ Size + County, data = crops_frame)
 ancova_related_lm <- lm(Crops ~ Size + Related, data = crops_frame)
 
+writeLines("\n                          ### Size ###")
+print(anova(size_anova))
+writeLines("\n                          ### Size + County ###")
 print(drop1(ancova_county_lm, test = "F"))
+writeLines("\n                          ### Size + Related ###")
 print(drop1(ancova_related_lm, test = "F"))
-print(" -> The significance for County and Related are to low")
-print("when accounting for Size.")
+writeLines(" -> The significance for County and Related are to ")
+writeLines("low when accounting for Size.")
+
+qqnorm(residuals(size_anova))
 qqnorm(residuals(ancova_county_lm))
 qqnorm(residuals(ancova_related_lm))
