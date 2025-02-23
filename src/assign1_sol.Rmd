@@ -1,0 +1,216 @@
+---
+title: "Assignment 1"
+author: "Paul Jungnickel, Wessel Beumer, Kushnava Singha, group 10"
+date: "23 02 2025"
+output: pdf_document
+highlight: tango
+---
+`r options(digits=3)`
+
+## Exercise 1
+**a)** 
+```{r, fig.height=3, fig.width=6}
+
+cholesterol <- read.table("../data/cholesterol.txt", header = TRUE);
+chol_frame <- data.frame(cholesterol);
+
+```
+
+
+```{r, fig.height=3, fig.width=6}
+
+par(mfrow=c(1,2)); 
+p1 <- hist(chol_frame$Before, 8);
+p2 <- hist(chol_frame$After8weeks, 6)
+qqnorm(chol_frame$Before);
+qqline(chol_frame$Before);
+qqnorm(chol_frame$After8weeks);
+qqline(chol_frame$After8weeks); # two QQ-plots next to each other
+```
+
+The histograms of the two samples both appear normal, even though the sample size is very small. The Q-Q plots confirm this.
+
+
+
+
+`cor(chol_frame$Before, chol_frame$After8weeks)` `r cor(chol_frame$Before, chol_frame$After8weeks)`
+
+The correlation between the two samples is almost one i.e. a high cholesterol at the start also implies a high cholesterol level after 8 weeks.
+
+
+
+**b)** 
+The experiment outcomes are paired , since the same person is studied at two time units
+
+
+```{r, fig.height=3, fig.width=6}
+
+
+t.test(chol_frame$Before, chol_frame$After8weeks, paired=TRUE)
+
+```
+
+
+The null hypothesis H0 (no difference in mean) is rejected with a mean decrease of 0.63 after 8 weeks.
+
+
+The permutation test can be applied since we have paired samples
+
+
+```{r, fig.height=3, fig.width=6}
+
+X = chol_frame$Before
+Y = chol_frame$After8weeks
+B = 10000
+Tstar = numeric(B)
+for(i in 1:B){
+  xystar = t(apply(cbind(X, Y), 1, sample))
+  Tstar[i] = mean(xystar[,1] - xystar[,2])
+}
+t = mean(X-Y)
+pl=sum(Tstar<t)/B;pr=sum(Tstar>t)/B
+p = 2*min(pl, pr)
+print(p)
+
+```
+
+
+p is much smaller than 0.95 so there is a significant difference after 8 weeks
+
+
+# Mann-Whitney can be applied but is less strong - designed for samples from different populations
+
+```{r, fig.height=3, fig.width=6}
+
+wilcox.test(X, Y)
+
+```
+again the null hypothesis is rejected.
+
+
+**c)** 
+
+#we have a discrete sample whose true std is unknown -> student dist
+
+
+```{r, fig.height=3, fig.width=6}
+X <- chol_frame$After8weeks
+print("97 percent confidence interval assuming normality:")
+mean(X) + qt(c(0.015, 1-0.015), df=length(X)-1) * sd(X) / sqrt(mean(X))
+
+B = 1000
+Tstar = numeric(B)
+for(i in 1:B){
+  Xstar = sample(X, replace=TRUE)
+  Tstar[i] = mean(Xstar)
+}
+Tstar_q = quantile(-Tstar, c(0.015, 1-0.015))
+mean(Tstar)
+mean(X)
+2*mean(X) + Tstar_q
+
+```
+with bootstrapping we get a significantly smaller confidence interval.
+
+
+
+**d)** 
+
+
+```{r, fig.height=3, fig.width=6}
+B = 1000
+Tstar = numeric(B)
+theta = seq(from=3, to=12, by=0.001)
+num_test_pts = length(theta)
+p = numeric(num_test_pts)
+for(n in 1:num_test_pts){
+  for(i in 1:B){
+    Xstar = runif(length(X), 3,theta[n])
+    Tstar[i] = max(Xstar)
+  }
+  t = max(X)
+  pl=sum(Tstar<t)/B;pr=sum(Tstar>t)/B
+  p[n] = 2*min(pl, pr)
+}
+plot(theta, p)
+print(theta[p>0.95])
+
+```
+for theta between 7.83 and 7.88 we have p>0.95 i.e. do not reject H0. 
+
+
+Kolmogorov Smirnov can be applied by collecting independent samples from U(3, theta)
+Since we are now looking at the entire distribution we always reject the null hypothesis
+
+```{r, fig.height=3, fig.width=6}
+suppressWarnings({
+B = 1000
+Tstar = numeric(B)
+theta = seq(from=3, to=12, by=0.01)
+num_test_pts = length(theta)
+p = numeric(num_test_pts)
+for(n in 1:num_test_pts){
+  
+  Y = runif(B, 3, theta)
+  k_test = ks.test(X, Y)
+  p[n] = k_test$p.value
+  
+}
+plot(theta, p)
+print(theta[p>0.95])
+})
+```
+
+
+
+**e)** 
+use bootstrapping to get a confidence interval on the median of after8weeks
+
+```{r, fig.height=3, fig.width=6}
+X = chol_frame$After8weeks
+B = 1000
+Tstar = numeric(B)
+for(i in 1:B){
+  Xstar = sample(X, replace=TRUE)
+  Tstar[i] = median(Xstar)
+}
+Tstar_q = quantile(-Tstar, c(0.05, 1-0.05))
+median(X)
+2*median(X) + Tstar_q
+
+```
+
+
+The median has a higher-than 5% chance of being larger than 6 - not statistically significant
+
+again use bootstrapping to get a confidence interval on the 25th percentile
+
+```{r, fig.height=3, fig.width=6}
+
+X = chol_frame$After8weeks
+B = 100000
+Tstar = numeric(B)
+for(i in 1:B){
+  Xstar = sample(X, replace=TRUE)
+  Tstar[i] = quantile(Xstar, 0.25)
+}
+Tstar_q = quantile(-Tstar, c(0.05, 1-0.05))
+quantile(X, 0.25)
+2*quantile(X, 0.25) + Tstar_q
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
