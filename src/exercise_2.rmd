@@ -3,7 +3,7 @@ title: "Exercise 2: Crops"
 output: pdf_document
 ---
 # Exercise 2: Crops 
-```{r}
+```{r, echo=F}
 crops <- read.table("../data/crops.txt", header = TRUE)
 crops_frame <- data.frame(crops)
 yes_filter <- data.frame(match = c("yes"))
@@ -25,7 +25,7 @@ anova(county_related_anova)
 
 The p-value here is given by the `Pr(>F)` column. For the Related and County factors separately, the p-value is not below 0.05, which means that a linear relation between these factors and the crop yield cannot be conclusively established. This is also true for the interaction between County and Related. As the two-way ANOVA assumes the data is normally distributed, we have to asses the normality of the data.
 
-```{r, fig.height=3, fig.width=6}
+```{r, fig.height=3, fig.width=6, echo=F}
 par(mfrow=c(1,2))
 p1 <- qqnorm(residuals(county_related_anova))
 qqline(residuals(county_related_anova))
@@ -65,12 +65,23 @@ This ANCOVA shows that the size of the farm is strongly correlated with the yiel
 drop1(ancova_related_lm, test = "F")
 summary(ancova_related_lm)
 ```
-While the correlation between crop yield and farm size is significant, the related status does not appear to have an effect.
+While the correlation between crop yield and farm size is significant, the related status does not appear to have an effect. These results lead us to conclude that the effect of county and relation on the influence of size is negligible.
 
-```{r, fig.height=3, fig.width=6}
-qqplot(residuals(ancova_county_lm))
+```{r, fig.height=3, fig.width=6, echo=F}
+par(mfrow=c(1,2))
+plot(fitted(ancova_county_lm), residuals(ancova_county_lm))
+plot(fitted(ancova_related_lm), residuals(ancova_related_lm))
+```
+
+As ANCOVA assumes that the underlying data is normally distributed, we will have to check for normality. Both of the above residual plots show no obvious correlation in the variance of the residuals, which implies a normal distribution.
+
+```{r, fig.height=3, fig.width=6, echo=F}
+par(mfrow=c(1,2))
+qqnorm(residuals(ancova_county_lm))
 qqline(residuals(ancova_county_lm))
-qqplot(residuals(ancova_related_lm))
+qqnorm(residuals(ancova_related_lm))
 qqline(residuals(ancova_related_lm))
 ```
-As ANCOVA assumes that the underlying data is normally distributed, we will have to check for normality. 
+The Q-Q plots above show the points roughly in a straight line. This implies that the underlying data is normally distributed.
+
+## Part C 
