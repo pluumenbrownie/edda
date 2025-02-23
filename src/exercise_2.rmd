@@ -14,7 +14,10 @@ crops_frame$Related <- factor(crops_frame$Related)
 county_related_anova <- lm(Crops ~ Related * County, data = crops_frame)
 ```
 
-This data comes from a sample of farms from three counties in Iowa. We want to know how the factors of the county and whether the farmer is related to the landlord of the farmland is related to the total crop yield of the farms. Firstly, we perform a two-way ANOVA on the Count, Related and Crops columns, which gives
+This data comes from a sample of farms from three counties in Iowa. We want to know how the factors of the county and whether the farmer is related to the landlord of the farmland is related to the total crop yield of the farms. 
+
+## Part A
+Firstly, we perform a two-way ANOVA on the Count, Related and Crops columns, which gives
 
 ```{r}
 anova(county_related_anova)
@@ -22,11 +25,21 @@ anova(county_related_anova)
 
 The p-value here is given by the `Pr(>F)` column. For the Related and County factors separately, the p-value is not below 0.05, which means that a linear relation between these factors and the crop yield cannot be conclusively established. This is also true for the interaction between County and Related. As the two-way ANOVA assumes the data is normally distributed, we have to asses the normality of the data.
 
-```{r}
-qqnorm(residuals(county_related_anova))
+```{r, fig.height=3, fig.width=6}
+par(mfrow=c(1,2))
+p1 <- qqnorm(residuals(county_related_anova))
+qqline(residuals(county_related_anova))
+p2 <- plot(fitted(county_related_anova), residuals(county_related_anova))
 ```
-This Q-Q plot of the residuals of the ANOVA places the point in roughly a straight line, which implies that this data is normally distributed.
-# ```{r}
-plot(fitted(county_related_anova), residuals(county_related_anova))
-# ```
-This plot shows how the spread of the residuals is roughly equal for all values. This implies that the underlying data is normally distributed.
+
+The left Q-Q plot of the residuals of the ANOVA places the point in roughly a straight line, which implies that this data is normally distributed.
+
+The right plot shows how the spread of the residuals is roughly equal for all values. This implies that the underlying data is normally distributed.
+
+```{r}
+summary(county_related_anova)
+```
+This summary shows that the average farm in county 1 of which the farmer is not related to the landlord is $6700$. The average for a farmer in county 3 would then be 
+```{r}
+6700.0 + 851.0
+```
