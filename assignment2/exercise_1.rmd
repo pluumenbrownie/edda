@@ -1,0 +1,55 @@
+---
+title: "Exercise 1: Titanic"
+output: pdf_document
+---
+# Exercise 2: Titanic 
+```{r}
+# nolint start: indentation_linter.
+data <- read.table("../data/titanic.txt", header = TRUE)
+data <- data.frame(data)
+data_size <- length(data$Name)
+data_not_na <- data[!is.na(data$Age), ]
+data_na <- data[is.na(data$Age), ]
+p_class <- data$PClass
+sex <- data$Sex
+```
+
+```{r}
+colors <- c("green", "orange", "brown")
+plot_labels <- c("Age defined", "Class", "Sex")
+plot_data <- matrix(
+    data = c(
+        length(data_na$Age), length(data_not_na$Age), 0,
+        sum(p_class == "1st"), sum(p_class == "2nd"), sum(p_class == "3rd"),
+        sum(sex == "female"), sum(sex == "male"), 0
+    ),
+    nrow = 3, byrow = FALSE
+)
+barplot(
+    matrix(c(length(data_na$Age), length(data_not_na$Age)), ncol = 1),
+    main = "Summary of data",
+    names.arg = "Age",
+    col = colors,
+    # ylim = data_size,
+    beside = TRUE
+)
+barplot(
+    matrix(c(
+        sum(p_class == "1st"), sum(p_class == "2nd"),
+        sum(p_class == "3rd")
+    ), ncol = 1),
+    main = "Summary of data",
+    names.arg = "Class",
+    col = colors,
+    # ylim = data_size,
+    beside = TRUE
+)
+```
+
+
+
+
+
+```{r, echo=F}
+# nolint end
+```
