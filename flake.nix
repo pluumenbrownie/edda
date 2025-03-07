@@ -34,6 +34,7 @@
             rmarkdown
             ggplot2
             dplyr
+            bookdown
           ]);
         shellHook = ''
           mkdir -p .vscode
