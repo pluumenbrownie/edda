@@ -8,7 +8,6 @@ output: pdf_document
 data <- read.table("../data/titanic.txt", header = TRUE)
 data <- data.frame(data)
 data$PClass <- factor(data$PClass)
-data$Survived <- factor(data$Survived)
 data$Sex <- factor(data$Sex)
 
 data_not_na <- data[!is.na(data$Age), ]
@@ -74,11 +73,18 @@ par(mar = c(2, 1, 1.5, 1))
 boxplot(matrix(c(data_not_na$Age)), horizontal = TRUE, hight = 1)
 mtext("Known age distribution", side = 3, line = -1, outer = TRUE)
 ```
-The data for this exercise is a part of the passenger manifest for the Titanic. The dataset covers the names, passenger class, survival status and, when available, the age of 1313 passengers. A summary of the data is given above. 
+The data for this exercise is a part of the passenger manifest for the Titanic. The dataset covers the names, passenger class, survival status and, when available, the age of 1313 passengers. A summary of the data is given above. Because the age of some passengers is unavailable, we will use a which does not include these passengers when their age is required. 
 
 ```{R}
-# age_glm <- glm(Survived ~ Age, data = data_not_na)
-data$Survived
+age_glm <- glm(Survived ~ Age, data = data_not_na, family=binomial)
+summary(age_glm)
+sex_glm <- glm(Survived ~ Sex, data = data, family=binomial)
+summary(sex_glm)
+exp(0.69315-2.30118)
+cls_glm <- glm(Survived ~ PClass, data = data, family=binomial)
+summary(cls_glm)
+exp(0.4029-0.7052)
+exp(0.4029-1.8265)
 ```
 
 ```{r, echo=F}
